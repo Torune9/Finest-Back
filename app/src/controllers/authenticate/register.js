@@ -1,32 +1,41 @@
-const {user} =require('../../../../models')
-const {validationResult} = require('express-validator')
+const {user} = require('../../../../models')
+const {matchedData} = require('express-validator')
 const bcrypt = require('bcrypt')
 
 const userRegister = async(req,res)=>{
     const salt = 15
-    const {name,email,password} = req.body
-    const pwHash = await bcrypt.hash(password,salt)
-    const result = validationResult(req)
     const response = {
         message : 'register success',
     }
-    const data = {
-        name : name,
-        password : pwHash,
-        email : email
-    }
     try {
+        const resultData = matchedData(req)
+        const pwHash = await bcrypt.hash(resultData.password,salt)
+        const data = {
+            name : resultData.name,
+            password : pwHash,
+            email : resultData.email
+        }
+       await user.create(data)
+       return res.json(response)
        
-        if (result.isEmpty()) {
-            await user.create(data)
-            return res.json(response)
+    } catch (error) {
+        const dbError = error.errors[0]
+        if (dbError) {
+            res.status(400).json({
+                message  : dbError.message,
+                result : [
+                    {   
+                        type : dbError.type,
+                        path : dbError.path,
+                        info : `${dbError.path} already exists` 
+                    },
+                ]
+            })
         }else{
-            return res.status(404).json({
-                error : result.array()
+            res.status(500).json({
+                message : error
             })
         }
-    } catch (error) {
-        return res.send(error)
     }
 }
 

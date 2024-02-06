@@ -16,10 +16,17 @@ module.exports = {
         type: Sequelize.STRING
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique : true
       },
       profile: {
         type: Sequelize.STRING
+      },
+      token : {
+        type : Sequelize.STRING
+      },
+      exp_token :{
+        type : Sequelize.DATE
       },
       createdAt: {
         allowNull: false,

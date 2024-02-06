@@ -1,11 +1,9 @@
 const authRouter = require('express').Router()
-const {body} = require('express-validator')
-
-const userLogin = require('../../controllers/authenticate/login')
+const filterForm = require('../../service/validator/filterForm')
 const userRegister = require('../../controllers/authenticate/register')
 
+authRouter.post('/user/register',filterForm(),userRegister)
 
-authRouter.post('/user/register',body(['name','email','password']).notEmpty(),userRegister)
-authRouter.post('/user/login',userLogin)
+authRouter.post('/user/login',)
 
 module.exports = authRouter

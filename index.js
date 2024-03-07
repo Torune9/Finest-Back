@@ -1,12 +1,17 @@
-const routes = require('./app/src/router/routes')
-const express = require('express')
-const app = express()
-const port = 3000
-const bodyParser = require('body-parser')
+require('dotenv').config({ path: '.env.development' });
 
+const routes = require('./app/src/router/routes')
+const cors = require('cors')
+const bodyParser = require('body-parser')
+const port = 3000
+
+const {app,server} = require('./app/src/service/server/server')
+
+app.use(cors())
+app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
-    extended : true
+    extended : true,
 }))
 app.use(routes)
 
-app.listen(port,()=>console.log(`server running on port ${port}`))
+server.listen(port,()=>console.log(`server running on port ${port}`))
